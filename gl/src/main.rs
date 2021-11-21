@@ -44,9 +44,9 @@ fn main() {
     shader_program.set_used();
 
     let vertices: Vec<f32> = vec![
-        -0.5, -0.5, 0.0,
-        0.5, -0.5, 0.0,
-        0.0, 0.5, 0.0
+        -0.5, -0.5, 0.0,    1.0, 0.0, 0.0,
+        0.5, -0.5, 0.0,     0.0, 1.0, 0.0,
+        0.0, 0.5, 0.0,      0.0, 0.0, 1.0
     ];
 
     let mut vbo: gl::types::GLuint = 0;
@@ -81,8 +81,18 @@ fn main() {
             3, //Numero de componentes por atributo generico de vertice
             gl::FLOAT, //Tipo de dato
             gl::FALSE, //Normalizado
-            (3 * std::mem::size_of::<f32>()) as gl::types::GLint, // Stride (byte offset entre atributos consecutivos)
+            (6 * std::mem::size_of::<f32>()) as gl::types::GLint, // Stride (byte offset entre atributos consecutivos)
             std::ptr::null() //Offset del primer elemento
+        );
+
+        gl::EnableVertexAttribArray(1);
+        gl::VertexAttribPointer(
+            1,
+            3,
+            gl::FLOAT,
+            gl::FALSE,
+            (6 * std::mem::size_of::<f32>()) as gl::types::GLint,
+            (3 * std::mem::size_of::<f32>()) as *const gl::types::GLvoid
         );
 
         gl::BindBuffer(gl::ARRAY_BUFFER, 0);
