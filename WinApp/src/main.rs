@@ -43,6 +43,52 @@ fn main() {
 
     shader_program.set_used();
 
+    let vertices: Vec<f32> = vec![
+        -0.5, -0.5, 0.0,
+        0.5, -0.5, 0.0,
+        0.0, 0.5, 0.0
+    ];
+
+    let mut vbo: gl::types::GLuint = 0;
+    unsafe {
+        gl::GenBuffers(1, &mut vbo);
+    }
+
+    unsafe {
+        gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
+        gl::BufferData(
+            gl::ARRAY_BUFFER, // target
+            (vertices.len() * std::mem::size_of::<f32>()) as gl::types::GLsizeiptr, // size of data in bytes
+            vertices.as_ptr() as *const gl::types::GLvoid, // pointer to data
+            gl::STATIC_DRAW, // usage
+        );
+        gl::BindBuffer(gl::ARRAY_BUFFER, 0); // unbind the buffer
+    }
+
+    let mut vao: gl::types::GLuint = 0;
+    unsafe {
+        gl::GenVertexArrays(1, &mut vao);
+    }
+
+    unsafe {
+        gl::BindVertexArray(vao);
+
+        gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
+
+        gl::EnableVertexAttribArray(0);
+        gl::VertexAttribPointer(
+            0, //Indice del atributo genérico del vertice
+            3, //Numero de componentes por atributo generico de vertice
+            gl::FLOAT, //Tipo de dato
+            gl::FALSE, //Normalizado
+            (3 * std::mem::size_of::<f32>()) as gl::types::GLint, // Stride (byte offset entre atributos consecutivos)
+            std::ptr::null() //Offset del primer elemento
+        );
+
+        gl::BindBuffer(gl::ARRAY_BUFFER, 0);
+        gl::BindVertexArray(0)
+    }
+
     'main: loop {
         for event in event_pump.poll_iter() {
             match event {
@@ -54,7 +100,16 @@ fn main() {
         unsafe {
             gl::Clear(gl::COLOR_BUFFER_BIT);
         }
-        
+ 
+        shader_program.set_used();
+        unsafe {
+            gl::BindVertexArray(vao);
+            gl::DrawArrays(gl::TRIANGLES, //Modo
+                0, //Indice de entrada en los arrays
+                3 //Numero de indices a leer
+            );
+        }
+
         window.gl_swap_window();
     }
 
