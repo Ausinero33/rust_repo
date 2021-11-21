@@ -1,0 +1,13 @@
+[package]
+name = "WinApp"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[features]
+gl_debug = ["gl/debug"]
+
+[dependencies]
+sdl2 = { version = "0.35.0", features = ["bundled", "static-link"] }
+gl = { path = "lib/gl" }
